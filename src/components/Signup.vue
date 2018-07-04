@@ -37,9 +37,14 @@
               ></v-text-field>
             </v-flex>
             <v-flex class="text-xs-center" mt-5>
-              <v-btn color="primary" type="submit">Sign Up</v-btn>
+              <v-btn color="primary" type="submit" :disabled="loading">Sign Up</v-btn>
             </v-flex>
           </v-layout>
+          <v-flex>
+            <v-alert type="error" dismissible v-model="alert">
+              {{ error }}
+            </v-alert>
+          </v-flex>
         </form>
       </v-flex>
     </v-layout>
@@ -52,12 +57,31 @@
       return {
         email: '',
         password: '',
-        passwordConfirm: ''
+        passwordConfirm: '',
+        alert: false
+      }
+    },
+    watch: {
+      error (value) {
+        if (value) {
+          this.alert = true
+        }
+      },
+      alert (value) {
+        if (!value) {
+          this.$store.commit('setError', null)
+        }
       }
     },
     computed: {
       comparePasswords () {
         return this.password === this.passwordConfirm ? true : 'Passwords don\'t match'
+      },
+      error () {
+        return this.$store.state.error
+      },
+      loading () {
+        return this.$store.state.loading
       }
     },
     methods: {
