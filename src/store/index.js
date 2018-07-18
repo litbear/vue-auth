@@ -37,10 +37,34 @@ export const store = new Vuex.Store({
           commit('setError', error.message)
           commit('setLoading', false)
         })
+    },
+    userSignIn ({commit}, payload) {
+      commit('setLoading', true)
+      firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
+      .then(firebaseUser => {
+        commit('setUser', {email: firebaseUser.user.email})
+        commit('setLoading', false)
+        commit('setError', null)
+        router.push('/home')
+      })
+      .catch(error => {
+        commit('setError', error.message)
+        commit('setLoading', false)
+      })
+    },
+    autoSignIn ({commit}, payload) {
+      commit('setUser', {email: payload.email})
+    },
+    userSignOut ({commit}) {
+      firebase.auth().signOut()
+      commit('setUser', null)
+      router.push('/')
     }
   },
   getters: {
     error: state => state.error,
-    loading: state => state.loading
+    loading: state => state.loading,
+    appTitle: state => state.appTitle,
+    isAuthenticated: state => state.user !== null && state.user !== undefined
   }
 })

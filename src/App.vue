@@ -16,6 +16,12 @@
           </v-list-tile-action>
           <v-list-tile-content>{{ item.title }}</v-list-tile-content>
         </v-list-tile>
+        <v-list-tile v-if="isAuthenticated" @click="userSignOut">
+          <v-list-tile-action>
+            <v-icon>exit_to_app</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>Sign Out</v-list-tile-content>
+        </v-list-tile>
       </v-list>
     </v-navigation-drawer>
 
@@ -39,6 +45,10 @@
           <v-icon left dark>{{ item.icon }}</v-icon>
           {{ item.title }}
         </v-btn>
+        <v-btn v-if="isAuthenticated" flat @click="userSignOut">
+          <v-icon left>exit_to_app</v-icon>
+          Sign Out
+        </v-btn>
       </v-toolbar-items>
     </v-toolbar>
 
@@ -50,21 +60,33 @@
 </template>
 
 <script>
+  import {mapGetters} from 'vuex'
+
   export default {
     data () {
       return {
         // appTitle: 'Awesome App',
-        sidebar: false,
-        menuItems: [
-          { title: 'Home', path: '/home', icon: 'home' },
-          { title: 'Sign Up', path: '/signup', icon: 'face' },
-          { title: 'Sign In', path: '/signin', icon: 'lock_open' }
-        ]
+        sidebar: false
       }
     },
     computed: {
-      appTitle () {
-        return this.$store.state.appTitle
+      ...mapGetters(['appTitle', 'isAuthenticated']),
+      menuItems () {
+        if (this.isAuthenticated) {
+          return [
+            { title: 'Home', path: '/home', icon: 'home' }
+          ]
+        } else {
+          return [
+            { title: 'Sign Up', path: '/signup', icon: 'face' },
+            { title: 'Sign In', path: '/signin', icon: 'lock_open' }
+          ]
+        }
+      }
+    },
+    methods: {
+      userSignOut () {
+        this.$store.dispatch('userSignOut')
       }
     }
   }

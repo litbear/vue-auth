@@ -5,14 +5,20 @@
         <h1>Sign In</h1>
       </v-flex>
       <v-flex xs12 sm6 offset-sm3 mt-3>
-        <form>
+        <form @submit.prevent="userSignIn">
           <v-layout column>
+            <v-flex>
+              <v-alert type="error" dismissible v-model="isShowError">
+                {{ error }}
+              </v-alert>
+            </v-flex>
             <v-flex>
               <v-text-field
                 name="email"
                 label="Email"
                 id="email"
                 type="email"
+                v-model="email"
                 required></v-text-field>
             </v-flex>
             <v-flex>
@@ -21,6 +27,7 @@
                 label="Password"
                 id="password"
                 type="password"
+                v-model="password"
                 required></v-text-field>
             </v-flex>
             <v-flex class="text-xs-center" mt-5>
@@ -34,5 +41,36 @@
 </template>
 
 <script>
-  export default {}
+
+import {mapGetters} from 'vuex'
+
+export default {
+  data () {
+    return {
+      email: '',
+      password: '',
+      alert: false
+    }
+  },
+  methods: {
+    userSignIn () {
+      this.$store.dispatch('userSignIn', { email: this.email, password: this.password })
+    }
+  },
+  computed: {
+    ...mapGetters(['error', 'loading']),
+    isShowError: {
+      get () {
+        return this.error !== null
+      },
+      set (value) {
+        if (!value) {
+          this.$store.commit('setError', null)
+        }
+      }
+    }
+  },
+  watch: {
+  }
+}
 </script>
