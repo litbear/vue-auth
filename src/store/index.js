@@ -39,5 +39,8 @@ export const store = new Vuex.Store({
         })
     }
   },
-  getters: {}
+  getters: {
+    error: state => state.error,
+    loading: state => state.loading
+  }
 })

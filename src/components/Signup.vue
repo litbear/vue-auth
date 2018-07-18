@@ -41,7 +41,7 @@
             </v-flex>
           </v-layout>
           <v-flex>
-            <v-alert type="error" dismissible v-model="alert">
+            <v-alert type="error" dismissible v-model="isShowError">
               {{ error }}
             </v-alert>
           </v-flex>
@@ -52,36 +52,32 @@
 </template>
 
 <script>
+  import {mapGetters} from 'vuex'
+
   export default {
     data () {
       return {
         email: '',
         password: '',
-        passwordConfirm: '',
-        alert: false
+        passwordConfirm: ''
       }
     },
     watch: {
-      error (value) {
-        if (value) {
-          this.alert = true
-        }
-      },
-      alert (value) {
-        if (!value) {
-          this.$store.commit('setError', null)
-        }
-      }
     },
     computed: {
+      ...mapGetters(['error', 'loading']),
       comparePasswords () {
         return this.password === this.passwordConfirm ? true : 'Passwords don\'t match'
       },
-      error () {
-        return this.$store.state.error
-      },
-      loading () {
-        return this.$store.state.loading
+      isShowError: {
+        get () {
+          return this.error !== null
+        },
+        set (value) {
+          if (!value) {
+            this.$store.commit('setError', null)
+          }
+        }
       }
     },
     methods: {
